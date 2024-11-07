@@ -5,6 +5,7 @@ package email_routing_dns
 import (
 	"context"
 
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -30,6 +31,10 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Required:      true,
 				PlanModifiers: []planmodifier.String{stringplanmodifier.RequiresReplace()},
 			},
+			"name": schema.StringAttribute{
+				Required:   true,
+				CustomType: jsontypes.NormalizedType{},
+			},
 			"created": schema.StringAttribute{
 				Description: "The date and time the settings have been created.",
 				Computed:    true,
@@ -44,10 +49,6 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 				Description: "The date and time the settings have been modified.",
 				Computed:    true,
 				CustomType:  timetypes.RFC3339Type{},
-			},
-			"name": schema.StringAttribute{
-				Description: "Domain of your zone.",
-				Computed:    true,
 			},
 			"skip_wizard": schema.BoolAttribute{
 				Description: "Flag to check if the user skipped the configuration wizard.",
