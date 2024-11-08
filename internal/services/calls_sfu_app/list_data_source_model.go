@@ -3,13 +3,8 @@
 package calls_sfu_app
 
 import (
-	"context"
-
-	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/calls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -23,13 +18,13 @@ type CallsSFUAppsDataSourceModel struct {
 	Result    customfield.NestedObjectList[CallsSFUAppsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *CallsSFUAppsDataSourceModel) toListParams(_ context.Context) (params calls.TURNKeyListParams, diags diag.Diagnostics) {
-	params = calls.TURNKeyListParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+// func (m *CallsSFUAppsDataSourceModel) toListParams(_ context.Context) (params calls.TURNKeyListParams, diags diag.Diagnostics) {
+// 	params = calls.TURNKeyListParams{
+// 		AccountID: cloudflare.F(m.AccountID.ValueString()),
+// 	}
 
-	return
-}
+// 	return
+// }
 
 type CallsSFUAppsResultDataSourceModel struct {
 	Created  timetypes.RFC3339 `tfsdk:"created" json:"created,computed" format:"date-time"`

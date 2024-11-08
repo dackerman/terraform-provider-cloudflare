@@ -3,13 +3,8 @@
 package calls_sfu_app
 
 import (
-	"context"
-
-	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/calls"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework-timetypes/timetypes"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
@@ -31,21 +26,21 @@ type CallsSFUAppDataSourceModel struct {
 	Filter    *CallsSFUAppFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *CallsSFUAppDataSourceModel) toReadParams(_ context.Context) (params calls.TURNKeyGetParams, diags diag.Diagnostics) {
-	params = calls.TURNKeyGetParams{
-		AccountID: cloudflare.F(m.AccountID.ValueString()),
-	}
+// func (m *CallsSFUAppDataSourceModel) toReadParams(_ context.Context) (params calls.TURNKeyGetParams, diags diag.Diagnostics) {
+// 	params = calls.TURNKeyGetParams{
+// 		AccountID: cloudflare.F(m.AccountID.ValueString()),
+// 	}
 
-	return
-}
+// 	return
+// }
 
-func (m *CallsSFUAppDataSourceModel) toListParams(_ context.Context) (params calls.TURNKeyListParams, diags diag.Diagnostics) {
-	params = calls.TURNKeyListParams{
-		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
-	}
+// func (m *CallsSFUAppDataSourceModel) toListParams(_ context.Context) (params calls.TURNKeyListParams, diags diag.Diagnostics) {
+// 	params = calls.TURNKeyListParams{
+// 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
+// 	}
 
-	return
-}
+// 	return
+// }
 
 type CallsSFUAppFindOneByDataSourceModel struct {
 	AccountID types.String `tfsdk:"account_id" path:"account_id,required"`

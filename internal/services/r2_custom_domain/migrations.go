@@ -2,14 +2,14 @@
 
 package r2_custom_domain
 
-import (
-	"context"
+// import (
+// 	"context"
 
-	"github.com/hashicorp/terraform-plugin-framework/resource"
-)
+// 	"github.com/hashicorp/terraform-plugin-framework/resource"
+// )
 
-var _ resource.ResourceWithUpgradeState = (*R2CustomDomainResource)(nil)
+// var _ resource.ResourceWithUpgradeState = (*R2CustomDomainResource)(nil)
 
-func (r *R2CustomDomainResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
-	return map[int64]resource.StateUpgrader{}
-}
+// func (r *R2CustomDomainResource) UpgradeState(ctx context.Context) map[int64]resource.StateUpgrader {
+// 	return map[int64]resource.StateUpgrader{}
+// }
