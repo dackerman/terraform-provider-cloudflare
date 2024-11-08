@@ -9,11 +9,8 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/option"
-	"github.com/cloudflare/cloudflare-go/v3/rate_limits"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
@@ -63,26 +60,26 @@ func (r *RateLimitResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
+	_, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
 	env := RateLimitResultEnvelope{*data}
-	_, err = r.client.RateLimits.New(
-		ctx,
-		rate_limits.RateLimitNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//_, err = r.client.RateLimits.New(
+	//	ctx,
+	//	rate_limits.RateLimitNewParams{
+	//		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	//	},
+	//	option.WithRequestBody("application/json", dataBytes),
+	//	option.WithResponseBodyInto(&res),
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 	bytes, _ := io.ReadAll(res.Body)
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
@@ -111,27 +108,27 @@ func (r *RateLimitResource) Update(ctx context.Context, req resource.UpdateReque
 		return
 	}
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
+	_, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
 	env := RateLimitResultEnvelope{*data}
-	_, err = r.client.RateLimits.Edit(
-		ctx,
-		data.ID.ValueString(),
-		rate_limits.RateLimitEditParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//_, err = r.client.RateLimits.Edit(
+	//	ctx,
+	//	data.ID.ValueString(),
+	//	rate_limits.RateLimitEditParams{
+	//		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	//	},
+	//	option.WithRequestBody("application/json", dataBytes),
+	//	option.WithResponseBodyInto(&res),
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 	bytes, _ := io.ReadAll(res.Body)
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
@@ -154,21 +151,21 @@ func (r *RateLimitResource) Read(ctx context.Context, req resource.ReadRequest, 
 
 	res := new(http.Response)
 	env := RateLimitResultEnvelope{*data}
-	_, err := r.client.RateLimits.Get(
-		ctx,
-		data.ID.ValueString(),
-		rate_limits.RateLimitGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//_, err := r.client.RateLimits.Get(
+	//	ctx,
+	//	data.ID.ValueString(),
+	//	rate_limits.RateLimitGetParams{
+	//		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	//	},
+	//	option.WithResponseBodyInto(&res),
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err := apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -187,18 +184,18 @@ func (r *RateLimitResource) Delete(ctx context.Context, req resource.DeleteReque
 		return
 	}
 
-	_, err := r.client.RateLimits.Delete(
-		ctx,
-		data.ID.ValueString(),
-		rate_limits.RateLimitDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//_, err := r.client.RateLimits.Delete(
+	//	ctx,
+	//	data.ID.ValueString(),
+	//	rate_limits.RateLimitDeleteParams{
+	//		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	//	},
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -221,21 +218,21 @@ func (r *RateLimitResource) ImportState(ctx context.Context, req resource.Import
 
 	res := new(http.Response)
 	env := RateLimitResultEnvelope{*data}
-	_, err := r.client.RateLimits.Get(
-		ctx,
-		path_rate_limit_id,
-		rate_limits.RateLimitGetParams{
-			ZoneID: cloudflare.F(path_zone_id),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//_, err := r.client.RateLimits.Get(
+	//	ctx,
+	//	path_rate_limit_id,
+	//	rate_limits.RateLimitGetParams{
+	//		ZoneID: cloudflare.F(path_zone_id),
+	//	},
+	//	option.WithResponseBodyInto(&res),
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err := apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

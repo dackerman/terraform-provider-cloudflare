@@ -5,14 +5,7 @@ package r2_managed_domain
 import (
 	"context"
 	"fmt"
-	"io"
-	"net/http"
-
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/option"
-	"github.com/cloudflare/cloudflare-go/v3/r2"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
@@ -53,93 +46,93 @@ func (r *R2ManagedDomainResource) Configure(ctx context.Context, req resource.Co
 }
 
 func (r *R2ManagedDomainResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var data *R2ManagedDomainModel
-
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	dataBytes, err := data.MarshalJSON()
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
-	res := new(http.Response)
-	env := R2ManagedDomainResultEnvelope{*data}
-	_, err = r.client.R2.Buckets.Domains.Managed.Update(
-		ctx,
-		data.BucketName.ValueString(),
-		r2.BucketDomainManagedUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	//var data *R2ManagedDomainModel
+	//
+	//resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	//
+	//if resp.Diagnostics.HasError() {
+	//	return
+	//}
+	//
+	//dataBytes, err := data.MarshalJSON()
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+	//	return
+	//}
+	//res := new(http.Response)
+	//env := R2ManagedDomainResultEnvelope{*data}
+	//_, err = r.client.R2.Buckets.Domains.Managed.Update(
+	//	ctx,
+	//	data.BucketName.ValueString(),
+	//	r2.BucketDomainManagedUpdateParams{
+	//		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	//	},
+	//	option.WithRequestBody("application/json", dataBytes),
+	//	option.WithResponseBodyInto(&res),
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
+	//bytes, _ := io.ReadAll(res.Body)
+	//err = apijson.UnmarshalComputed(bytes, &env)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+	//	return
+	//}
+	//data = &env.Result
+	//
+	//resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *R2ManagedDomainResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var data *R2ManagedDomainModel
-
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	var state *R2ManagedDomainModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
-		return
-	}
-	res := new(http.Response)
-	env := R2ManagedDomainResultEnvelope{*data}
-	_, err = r.client.R2.Buckets.Domains.Managed.Update(
-		ctx,
-		data.BucketName.ValueString(),
-		r2.BucketDomainManagedUpdateParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	//var data *R2ManagedDomainModel
+	//
+	//resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	//
+	//if resp.Diagnostics.HasError() {
+	//	return
+	//}
+	//
+	//var state *R2ManagedDomainModel
+	//
+	//resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
+	//
+	//if resp.Diagnostics.HasError() {
+	//	return
+	//}
+	//
+	//dataBytes, err := data.MarshalJSONForUpdate(*state)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to serialize http request", err.Error())
+	//	return
+	//}
+	//res := new(http.Response)
+	//env := R2ManagedDomainResultEnvelope{*data}
+	//_, err = r.client.R2.Buckets.Domains.Managed.Update(
+	//	ctx,
+	//	data.BucketName.ValueString(),
+	//	r2.BucketDomainManagedUpdateParams{
+	//		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	//	},
+	//	option.WithRequestBody("application/json", dataBytes),
+	//	option.WithResponseBodyInto(&res),
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
+	//bytes, _ := io.ReadAll(res.Body)
+	//err = apijson.UnmarshalComputed(bytes, &env)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+	//	return
+	//}
+	//data = &env.Result
+	//
+	//resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *R2ManagedDomainResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {

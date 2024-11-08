@@ -31,16 +31,16 @@ type CallsSFUAppDataSourceModel struct {
 	Filter    *CallsSFUAppFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *CallsSFUAppDataSourceModel) toReadParams(_ context.Context) (params calls.SFUGetParams, diags diag.Diagnostics) {
-	params = calls.SFUGetParams{
+func (m *CallsSFUAppDataSourceModel) toReadParams(_ context.Context) (params calls.TURNKeyGetParams, diags diag.Diagnostics) {
+	params = calls.TURNKeyGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
-func (m *CallsSFUAppDataSourceModel) toListParams(_ context.Context) (params calls.SFUListParams, diags diag.Diagnostics) {
-	params = calls.SFUListParams{
+func (m *CallsSFUAppDataSourceModel) toListParams(_ context.Context) (params calls.TURNKeyListParams, diags diag.Diagnostics) {
+	params = calls.TURNKeyListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}
 

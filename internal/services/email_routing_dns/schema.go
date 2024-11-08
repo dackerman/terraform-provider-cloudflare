@@ -53,6 +53,7 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			"skip_wizard": schema.BoolAttribute{
 				Description: "Flag to check if the user skipped the configuration wizard.",
 				Computed:    true,
+				Optional:    true,
 				Default:     booldefault.StaticBool(true),
 			},
 			"status": schema.StringAttribute{

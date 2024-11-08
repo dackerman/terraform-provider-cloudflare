@@ -47,11 +47,12 @@ func ResourceSchema(ctx context.Context) schema.Schema {
 			},
 			"name": schema.StringAttribute{
 				Description: "Domain of your zone.",
-				Computed:    true,
+				Required:    true,
 			},
 			"skip_wizard": schema.BoolAttribute{
 				Description: "Flag to check if the user skipped the configuration wizard.",
 				Computed:    true,
+				Optional:    true,
 				Default:     booldefault.StaticBool(true),
 			},
 			"status": schema.StringAttribute{

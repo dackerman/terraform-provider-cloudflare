@@ -5,7 +5,6 @@ package rate_limit
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/rate_limits"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -34,18 +33,18 @@ type RateLimitDataSourceModel struct {
 	Filter      *RateLimitFindOneByDataSourceModel                           `tfsdk:"filter"`
 }
 
-func (m *RateLimitDataSourceModel) toReadParams(_ context.Context) (params rate_limits.RateLimitGetParams, diags diag.Diagnostics) {
-	params = rate_limits.RateLimitGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+func (m *RateLimitDataSourceModel) toReadParams(_ context.Context) (params rate_limits.RateLimitListParams, diags diag.Diagnostics) {
+	//params = rate_limits.RateLimitGetParams{
+	//	ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	//}
 
 	return
 }
 
 func (m *RateLimitDataSourceModel) toListParams(_ context.Context) (params rate_limits.RateLimitListParams, diags diag.Diagnostics) {
-	params = rate_limits.RateLimitListParams{
-		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
-	}
+	//params = rate_limits.RateLimitListParams{
+	//	ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+	//}
 
 	return
 }

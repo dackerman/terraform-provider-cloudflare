@@ -11,6 +11,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
+/*
+Delete is failing to marshall into the struct. Most likely the reason is that is the schema defines the response
+body for the delete operation as an array of items. Whereas the response, the array is the value for a key called
+"dex_test". So the response in the schema should be updated to an object with a property as the key and value of an
+array
+*/
 func TestAccCloudflareDeviceDexTest_Traceroute(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
 	name := fmt.Sprintf("cloudflare_zero_trust_dex_test.%s", rnd)

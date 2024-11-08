@@ -5,13 +5,7 @@ package r2_custom_domain
 import (
 	"context"
 	"fmt"
-	"io"
-	"net/http"
-
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/option"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -49,41 +43,41 @@ func (d *R2CustomDomainDataSource) Configure(ctx context.Context, req datasource
 }
 
 func (d *R2CustomDomainDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *R2CustomDomainDataSourceModel
+	//var data *R2CustomDomainDataSourceModel
 
-	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	params, diags := data.toReadParams(ctx)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	res := new(http.Response)
-	env := R2CustomDomainResultDataSourceEnvelope{*data}
-	_, err := d.client.R2.Buckets.Domains.Custom.Get(
-		ctx,
-		data.BucketName.ValueString(),
-		data.DomainName.ValueString(),
-		params,
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	//resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
+	//
+	//if resp.Diagnostics.HasError() {
+	//	return
+	//}
+	//
+	//params, diags := data.toReadParams(ctx)
+	//resp.Diagnostics.Append(diags...)
+	//if resp.Diagnostics.HasError() {
+	//	return
+	//}
+	//
+	//res := new(http.Response)
+	//env := R2CustomDomainResultDataSourceEnvelope{*data}
+	//_, err := d.client.R2.Domains.Custom.Get(
+	//	ctx,
+	//	data.BucketName.ValueString(),
+	//	data.DomainName.ValueString(),
+	//	params,
+	//	option.WithResponseBodyInto(&res),
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
+	//bytes, _ := io.ReadAll(res.Body)
+	//err = apijson.UnmarshalComputed(bytes, &env)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+	//	return
+	//}
+	//data = &env.Result
+	//
+	//resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

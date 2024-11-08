@@ -38,9 +38,9 @@ func (m *ZoneLockdownsDataSourceModel) toListParams(_ context.Context) (params f
 	mModifiedOn, errs := m.ModifiedOn.ValueRFC3339Time()
 	diags.Append(errs...)
 
-	params = firewall.LockdownListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	//params = firewall.LockdownListParams{
+	//	ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	//}
 
 	if !m.CreatedOn.IsNull() {
 		params.CreatedOn = cloudflare.F(mCreatedOn)

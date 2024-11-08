@@ -54,6 +54,14 @@ func TestAccCloudflareDevicePostureRules_DataSource(t *testing.T) {
 	})
 }
 
+func getResultIndex(idx string) string {
+	length, err := strconv.Atoi(idx)
+	if err != nil {
+		return ""
+	}
+	return strconv.Itoa(length - 1)
+}
+
 func testAccCloudflareDevicePostureRulesConfig(name, accountID string) string {
 	return acctest.LoadTestCase("deviceposturerulesconfig.tf", name, accountID)
 }

@@ -5,7 +5,6 @@ package firewall_rule
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/firewall"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
@@ -33,9 +32,9 @@ type FirewallRuleDataSourceModel struct {
 }
 
 func (m *FirewallRuleDataSourceModel) toReadParams(_ context.Context) (params firewall.RuleGetParams, diags diag.Diagnostics) {
-	params = firewall.RuleGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	//params = firewall.RuleGetParams{
+	//	ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	//}
 
 	return
 }

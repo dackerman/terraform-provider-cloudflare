@@ -26,9 +26,9 @@ type UserAgentBlockingRulesDataSourceModel struct {
 }
 
 func (m *UserAgentBlockingRulesDataSourceModel) toListParams(_ context.Context) (params firewall.UARuleListParams, diags diag.Diagnostics) {
-	params = firewall.UARuleListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	//params = firewall.UARuleListParams{
+	//	ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	//}
 
 	if !m.Description.IsNull() {
 		params.Description = cloudflare.F(m.Description.ValueString())

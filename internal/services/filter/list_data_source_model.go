@@ -29,7 +29,7 @@ type FiltersDataSourceModel struct {
 
 func (m *FiltersDataSourceModel) toListParams(_ context.Context) (params filters.FilterListParams, diags diag.Diagnostics) {
 	params = filters.FilterListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+		ID: cloudflare.F(m.ZoneID.ValueString()),
 	}
 
 	if !m.ID.IsNull() {

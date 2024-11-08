@@ -92,18 +92,18 @@ func (d *SpectrumApplicationDataSource) Read(ctx context.Context, req datasource
 		}
 
 		env := SpectrumApplicationResultListDataSourceEnvelope{}
-		page, err := d.client.Spectrum.Apps.List(ctx, params)
+		_, err := d.client.Spectrum.Apps.List(ctx, params)
 		if err != nil {
 			resp.Diagnostics.AddError("failed to make http request", err.Error())
 			return
 		}
 
-		bytes := []byte(page.JSON.RawJSON())
-		err = apijson.UnmarshalComputed(bytes, &env)
-		if err != nil {
-			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
-			return
-		}
+		//bytes := []byte(page.JSON.RawJSON())
+		//err = apijson.UnmarshalComputed(bytes, &env)
+		//if err != nil {
+		//	resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
+		//	return
+		//}
 
 		if count := len(env.Result.Elements()); count != 1 {
 			resp.Diagnostics.AddError("failed to find exactly one result", fmt.Sprint(count)+" found")

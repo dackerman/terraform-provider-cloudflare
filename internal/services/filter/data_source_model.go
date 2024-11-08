@@ -31,17 +31,17 @@ type FilterDataSourceModel struct {
 	Filter      *FilterFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *FilterDataSourceModel) toReadParams(_ context.Context) (params filters.FilterGetParams, diags diag.Diagnostics) {
-	params = filters.FilterGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+func (m *FilterDataSourceModel) toReadParams(_ context.Context) (params filters.FilterListParams, diags diag.Diagnostics) {
+	/*params = filters.FilterGetParams{
+		ID: cloudflare.F(m.ZoneID.ValueString()),
+	}*/
 
 	return
 }
 
 func (m *FilterDataSourceModel) toListParams(_ context.Context) (params filters.FilterListParams, diags diag.Diagnostics) {
 	params = filters.FilterListParams{
-		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+		ID: cloudflare.F(m.Filter.ZoneID.ValueString()),
 	}
 
 	if !m.Filter.ID.IsNull() {

@@ -9,11 +9,8 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/firewall"
-	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
@@ -63,26 +60,26 @@ func (r *ZoneLockdownResource) Create(ctx context.Context, req resource.CreateRe
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
+	_, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
 	env := ZoneLockdownResultEnvelope{*data}
-	_, err = r.client.Firewall.Lockdowns.New(
-		ctx,
-		firewall.LockdownNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//_, err = r.client.Firewall.Lockdowns.New(
+	//	ctx,
+	//	firewall.LockdownNewParams{
+	//		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	//	},
+	//	option.WithRequestBody("application/json", dataBytes),
+	//	option.WithResponseBodyInto(&res),
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 	bytes, _ := io.ReadAll(res.Body)
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
@@ -111,27 +108,27 @@ func (r *ZoneLockdownResource) Update(ctx context.Context, req resource.UpdateRe
 		return
 	}
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
+	_, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
 	env := ZoneLockdownResultEnvelope{*data}
-	_, err = r.client.Firewall.Lockdowns.Update(
-		ctx,
-		data.ID.ValueString(),
-		firewall.LockdownUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//_, err = r.client.Firewall.Lockdowns.Update(
+	//	ctx,
+	//	data.ID.ValueString(),
+	//	firewall.LockdownUpdateParams{
+	//		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	//	},
+	//	option.WithRequestBody("application/json", dataBytes),
+	//	option.WithResponseBodyInto(&res),
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 	bytes, _ := io.ReadAll(res.Body)
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
@@ -154,21 +151,21 @@ func (r *ZoneLockdownResource) Read(ctx context.Context, req resource.ReadReques
 
 	res := new(http.Response)
 	env := ZoneLockdownResultEnvelope{*data}
-	_, err := r.client.Firewall.Lockdowns.Get(
-		ctx,
-		data.ID.ValueString(),
-		firewall.LockdownGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//_, err := r.client.Firewall.Lockdowns.Get(
+	//	ctx,
+	//	data.ID.ValueString(),
+	//	firewall.LockdownGetParams{
+	//		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	//	},
+	//	option.WithResponseBodyInto(&res),
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err := apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -187,18 +184,18 @@ func (r *ZoneLockdownResource) Delete(ctx context.Context, req resource.DeleteRe
 		return
 	}
 
-	_, err := r.client.Firewall.Lockdowns.Delete(
-		ctx,
-		data.ID.ValueString(),
-		firewall.LockdownDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//_, err := r.client.Firewall.Lockdowns.Delete(
+	//	ctx,
+	//	data.ID.ValueString(),
+	//	firewall.LockdownDeleteParams{
+	//		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	//	},
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
@@ -221,21 +218,21 @@ func (r *ZoneLockdownResource) ImportState(ctx context.Context, req resource.Imp
 
 	res := new(http.Response)
 	env := ZoneLockdownResultEnvelope{*data}
-	_, err := r.client.Firewall.Lockdowns.Get(
-		ctx,
-		path_lock_downs_id,
-		firewall.LockdownGetParams{
-			ZoneID: cloudflare.F(path_zone_id),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//_, err := r.client.Firewall.Lockdowns.Get(
+	//	ctx,
+	//	path_lock_downs_id,
+	//	firewall.LockdownGetParams{
+	//		ZoneID: cloudflare.F(path_zone_id),
+	//	},
+	//	option.WithResponseBodyInto(&res),
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err := apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return

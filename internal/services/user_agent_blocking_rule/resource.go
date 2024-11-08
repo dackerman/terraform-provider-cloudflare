@@ -9,10 +9,7 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/firewall"
-	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
@@ -61,26 +58,26 @@ func (r *UserAgentBlockingRuleResource) Create(ctx context.Context, req resource
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
+	_, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
 	env := UserAgentBlockingRuleResultEnvelope{*data}
-	_, err = r.client.Firewall.UARules.New(
-		ctx,
-		firewall.UARuleNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//_, err = r.client.Firewall.UARules.New(
+	//	ctx,
+	//	firewall.UARuleNewParams{
+	//		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	//	},
+	//	option.WithRequestBody("application/json", dataBytes),
+	//	option.WithResponseBodyInto(&res),
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 	bytes, _ := io.ReadAll(res.Body)
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
@@ -109,27 +106,27 @@ func (r *UserAgentBlockingRuleResource) Update(ctx context.Context, req resource
 		return
 	}
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
+	_, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
 	env := UserAgentBlockingRuleResultEnvelope{*data}
-	_, err = r.client.Firewall.UARules.Update(
-		ctx,
-		data.UARuleID.ValueString(),
-		firewall.UARuleUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//_, err = r.client.Firewall.UARules.Update(
+	//	ctx,
+	//	data.UARuleID.ValueString(),
+	//	firewall.UARuleUpdateParams{
+	//		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	//	},
+	//	option.WithRequestBody("application/json", dataBytes),
+	//	option.WithResponseBodyInto(&res),
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 	bytes, _ := io.ReadAll(res.Body)
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
@@ -152,21 +149,21 @@ func (r *UserAgentBlockingRuleResource) Read(ctx context.Context, req resource.R
 
 	res := new(http.Response)
 	env := UserAgentBlockingRuleResultEnvelope{*data}
-	_, err := r.client.Firewall.UARules.Get(
-		ctx,
-		data.UARuleID.ValueString(),
-		firewall.UARuleGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//_, err := r.client.Firewall.UARules.Get(
+	//	ctx,
+	//	data.UARuleID.ValueString(),
+	//	firewall.UARuleGetParams{
+	//		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	//	},
+	//	option.WithResponseBodyInto(&res),
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err := apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -185,18 +182,18 @@ func (r *UserAgentBlockingRuleResource) Delete(ctx context.Context, req resource
 		return
 	}
 
-	_, err := r.client.Firewall.UARules.Delete(
-		ctx,
-		data.UARuleID.ValueString(),
-		firewall.UARuleDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//_, err := r.client.Firewall.UARules.Delete(
+	//	ctx,
+	//	data.UARuleID.ValueString(),
+	//	firewall.UARuleDeleteParams{
+	//		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	//	},
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

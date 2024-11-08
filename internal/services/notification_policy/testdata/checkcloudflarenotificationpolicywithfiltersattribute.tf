@@ -5,14 +5,13 @@
     description = "test description"
     enabled     =  true
     alert_type  = "billing_usage_alert"
-    email_integration =[ {
-      name =  ""
-      id   =  "test@example.com"
-    }]
+    mechanisms = {
+      "email": [{"id": "test@example.com"}]
+    }
     filters = {
-  product = [
+      product = [
         "worker_requests",
       ]
 	  limit = ["100"]
-}
+    }
   }

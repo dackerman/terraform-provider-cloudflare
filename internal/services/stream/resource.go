@@ -107,14 +107,14 @@ func (r *StreamResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
+	_, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
 	env := StreamResultEnvelope{*data}
-	_, err = r.client.Stream.Edit(
+	/*_, err = r.client.Stream.Edit(
 		ctx,
 		data.Identifier.ValueString(),
 		stream.StreamEditParams{
@@ -127,7 +127,7 @@ func (r *StreamResource) Update(ctx context.Context, req resource.UpdateRequest,
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
-	}
+	}*/
 	bytes, _ := io.ReadAll(res.Body)
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {

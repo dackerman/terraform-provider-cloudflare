@@ -27,9 +27,9 @@ type FirewallRulesDataSourceModel struct {
 }
 
 func (m *FirewallRulesDataSourceModel) toListParams(_ context.Context) (params firewall.RuleListParams, diags diag.Diagnostics) {
-	params = firewall.RuleListParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+	//params = firewall.RuleListParams{
+	//	ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	//}
 
 	if !m.ID.IsNull() {
 		params.ID = cloudflare.F(m.ID.ValueString())

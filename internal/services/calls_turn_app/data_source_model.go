@@ -31,16 +31,16 @@ type CallsTURNAppDataSourceModel struct {
 	Filter    *CallsTURNAppFindOneByDataSourceModel `tfsdk:"filter"`
 }
 
-func (m *CallsTURNAppDataSourceModel) toReadParams(_ context.Context) (params calls.TURNGetParams, diags diag.Diagnostics) {
-	params = calls.TURNGetParams{
+func (m *CallsTURNAppDataSourceModel) toReadParams(_ context.Context) (params calls.TURNKeyGetParams, diags diag.Diagnostics) {
+	params = calls.TURNKeyGetParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 
 	return
 }
 
-func (m *CallsTURNAppDataSourceModel) toListParams(_ context.Context) (params calls.TURNListParams, diags diag.Diagnostics) {
-	params = calls.TURNListParams{
+func (m *CallsTURNAppDataSourceModel) toListParams(_ context.Context) (params calls.TURNKeyListParams, diags diag.Diagnostics) {
+	params = calls.TURNKeyListParams{
 		AccountID: cloudflare.F(m.Filter.AccountID.ValueString()),
 	}
 

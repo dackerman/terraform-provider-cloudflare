@@ -1,4 +1,4 @@
-package email_routing_settings_test
+package email_routing_dns_test
 
 import (
 	"fmt"
@@ -11,13 +11,13 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func testEmailRoutingSettingsConfig(resourceID, zoneID string, subDomain string) string {
-	return acctest.LoadTestCase("emailroutingsettingsconfig.tf", resourceID, zoneID, subDomain)
+func testEmailRoutingDNSConfig(resourceID, zoneID string, subDomain string) string {
+	return acctest.LoadTestCase("emailroutingdnsconfig.tf", resourceID, zoneID, subDomain)
 }
 
-func TestAccTestEmailRoutingSettings(t *testing.T) {
+func TestAccTestEmailRoutingDNS(t *testing.T) {
 	rnd := utils.GenerateRandomResourceName()
-	name := "cloudflare_email_routing_settings." + rnd
+	name := "cloudflare_email_routing_dns." + rnd
 	zoneID := os.Getenv("CLOUDFLARE_ZONE_ID")
 	domain := os.Getenv("CLOUDFLARE_DOMAIN")
 	subDomain := fmt.Sprintf("%s.%s", rnd, domain)
@@ -27,7 +27,7 @@ func TestAccTestEmailRoutingSettings(t *testing.T) {
 		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: testEmailRoutingSettingsConfig(rnd, zoneID, subDomain),
+				Config: testEmailRoutingDNSConfig(rnd, zoneID, subDomain),
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr(name, "enabled", "true"),
 					resource.TestCheckResourceAttr(name, consts.ZoneIDSchemaKey, zoneID),

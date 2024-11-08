@@ -31,18 +31,18 @@ type UserAgentBlockingRuleDataSourceModel struct {
 	Filter        *UserAgentBlockingRuleFindOneByDataSourceModel     `tfsdk:"filter"`
 }
 
-func (m *UserAgentBlockingRuleDataSourceModel) toReadParams(_ context.Context) (params firewall.UARuleGetParams, diags diag.Diagnostics) {
-	params = firewall.UARuleGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+func (m *UserAgentBlockingRuleDataSourceModel) toReadParams(_ context.Context) (params firewall.UARuleNewParams, diags diag.Diagnostics) {
+	//params = firewall.UARuleGetParams{
+	//	ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	//}
 
 	return
 }
 
 func (m *UserAgentBlockingRuleDataSourceModel) toListParams(_ context.Context) (params firewall.UARuleListParams, diags diag.Diagnostics) {
-	params = firewall.UARuleListParams{
-		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
-	}
+	//params = firewall.UARuleListParams{
+	//	ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+	//}
 
 	if !m.Filter.Description.IsNull() {
 		params.Description = cloudflare.F(m.Filter.Description.ValueString())

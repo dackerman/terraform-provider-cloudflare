@@ -156,7 +156,7 @@ func (r *EmailRoutingDNSResource) Read(ctx context.Context, req resource.ReadReq
 	_, err := r.client.EmailRouting.DNS.Get(
 		ctx,
 		email_routing.DNSGetParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithResponseBodyInto(&res),
 		option.WithMiddleware(logging.Middleware(ctx)),
@@ -188,7 +188,7 @@ func (r *EmailRoutingDNSResource) Delete(ctx context.Context, req resource.Delet
 	_, err := r.client.EmailRouting.DNS.Delete(
 		ctx,
 		email_routing.DNSDeleteParams{
-			ZoneID: cloudflare.F(data.ID.ValueString()),
+			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),
 	)

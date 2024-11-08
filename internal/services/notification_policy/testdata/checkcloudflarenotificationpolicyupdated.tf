@@ -5,12 +5,8 @@
     description = "%[3]s"
     enabled     =  true
     alert_type  = "universal_ssl_event_type"
-    email_integration =[ {
-      name =  ""
-      id   =  "test@example.com"
-    },
-    {
-    name =  ""
-      id   =  "test2@example.com"
-    }]
+    mechanisms = {
+      "email": [{"id": "test@example.com"}, {"id": "test2@example.com"}]
+    }
+    filters = {}
   }

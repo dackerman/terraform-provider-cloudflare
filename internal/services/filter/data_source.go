@@ -5,13 +5,7 @@ package filter
 import (
 	"context"
 	"fmt"
-	"io"
-	"net/http"
-
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/option"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -49,7 +43,7 @@ func (d *FilterDataSource) Configure(ctx context.Context, req datasource.Configu
 }
 
 func (d *FilterDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var data *FilterDataSourceModel
+	/*var data *FilterDataSourceModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -114,5 +108,5 @@ func (d *FilterDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 		data = &ts[0]
 	}
 
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)*/
 }

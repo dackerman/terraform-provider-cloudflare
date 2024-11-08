@@ -68,10 +68,10 @@ func (r *R2CustomDomainResource) Create(ctx context.Context, req resource.Create
 	}
 	res := new(http.Response)
 	env := R2CustomDomainResultEnvelope{*data}
-	_, err = r.client.R2.Buckets.Domains.Custom.New(
+	_, err = r.client.R2.Domains.Custom.New(
 		ctx,
 		data.BucketName.ValueString(),
-		r2.BucketDomainCustomNewParams{
+		r2.DomainCustomNewParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -117,11 +117,11 @@ func (r *R2CustomDomainResource) Update(ctx context.Context, req resource.Update
 	}
 	res := new(http.Response)
 	env := R2CustomDomainResultEnvelope{*data}
-	_, err = r.client.R2.Buckets.Domains.Custom.Update(
+	_, err = r.client.R2.Domains.Custom.Update(
 		ctx,
 		data.BucketName.ValueString(),
 		data.DomainName.ValueString(),
-		r2.BucketDomainCustomUpdateParams{
+		r2.DomainCustomUpdateParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithRequestBody("application/json", dataBytes),
@@ -144,39 +144,39 @@ func (r *R2CustomDomainResource) Update(ctx context.Context, req resource.Update
 }
 
 func (r *R2CustomDomainResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var data *R2CustomDomainModel
-
-	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
-
-	if resp.Diagnostics.HasError() {
-		return
-	}
-
-	res := new(http.Response)
-	env := R2CustomDomainResultEnvelope{*data}
-	_, err := r.client.R2.Buckets.Domains.Custom.Get(
-		ctx,
-		data.BucketName.ValueString(),
-		data.DomainName.ValueString(),
-		r2.BucketDomainCustomGetParams{
-			AccountID: cloudflare.F(data.AccountID.ValueString()),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
-	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
-		return
-	}
-	data = &env.Result
-
-	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
+	//var data *R2CustomDomainModel
+	//
+	//resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
+	//
+	//if resp.Diagnostics.HasError() {
+	//	return
+	//}
+	//
+	//res := new(http.Response)
+	//env := R2CustomDomainResultEnvelope{*data}
+	//_, err := r.client.R2.Domains.Custom.Get(
+	//	ctx,
+	//	data.BucketName.ValueString(),
+	//	data.DomainName.ValueString(),
+	//	r2.DomainCustomGetParams{
+	//		AccountID: cloudflare.F(data.AccountID.ValueString()),
+	//	},
+	//	option.WithResponseBodyInto(&res),
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
+	//bytes, _ := io.ReadAll(res.Body)
+	//err = apijson.UnmarshalComputed(bytes, &env)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
+	//	return
+	//}
+	//data = &env.Result
+	//
+	//resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *R2CustomDomainResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
@@ -188,11 +188,11 @@ func (r *R2CustomDomainResource) Delete(ctx context.Context, req resource.Delete
 		return
 	}
 
-	_, err := r.client.R2.Buckets.Domains.Custom.Delete(
+	_, err := r.client.R2.Domains.Custom.Delete(
 		ctx,
 		data.BucketName.ValueString(),
 		data.DomainName.ValueString(),
-		r2.BucketDomainCustomDeleteParams{
+		r2.DomainCustomDeleteParams{
 			AccountID: cloudflare.F(data.AccountID.ValueString()),
 		},
 		option.WithMiddleware(logging.Middleware(ctx)),

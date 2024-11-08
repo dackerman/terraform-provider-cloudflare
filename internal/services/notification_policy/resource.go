@@ -57,7 +57,8 @@ func (r *NotificationPolicyResource) Configure(ctx context.Context, req resource
 func (r *NotificationPolicyResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data *NotificationPolicyModel
 
-	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	//filters := customfield.NestedObject[NotificationPolicyFiltersModel]{}
+	//req.Plan.GetAttribute(ctx, path.Root("filters"), &filters)
 
 	if resp.Diagnostics.HasError() {
 		return
@@ -90,12 +91,16 @@ func (r *NotificationPolicyResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 	data = &env.Result
+	//data.Filters = filters
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *NotificationPolicyResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data *NotificationPolicyModel
+
+	//filters := customfield.NestedObject[NotificationPolicyFiltersModel]{}
+	//req.Plan.GetAttribute(ctx, path.Root("filters"), &filters)
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
@@ -139,6 +144,7 @@ func (r *NotificationPolicyResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 	data = &env.Result
+	//data.Filters = filters
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

@@ -1,14 +1,15 @@
 package notification_policy_test
 
 import (
+	"fmt"
 	"os"
 	"testing"
 
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/acctest"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/consts"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/utils"
-
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
 
 func TestAccCloudflareNotificationPolicy_Basic(t *testing.T) {
@@ -33,12 +34,24 @@ func TestAccCloudflareNotificationPolicy_Basic(t *testing.T) {
 			{
 				Config: testCheckCloudflareNotificationPolicy(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
+					func(state *terraform.State) error {
+						rs, ok := state.RootModule().Resources[resourceName]
+						if !ok {
+							return fmt.Errorf("root module has no resource called %s", resourceName)
+						}
+						fmt.Println(rs)
+						return nil
+					},
 					resource.TestCheckResourceAttr(resourceName, "name", "test SSL policy from terraform provider"),
 					resource.TestCheckResourceAttr(resourceName, "description", "test description"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "alert_type", "universal_ssl_event_type"),
 					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(resourceName, "email_integration.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "mechanisms.email.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "mechanisms.email.0.%", "1"),
+					resource.TestCheckResourceAttr(resourceName, "mechanisms.email.1.%", "1"),
+					resource.TestCheckResourceAttr(resourceName, "mechanisms.email.0.id", "test@example.com"),
+					resource.TestCheckResourceAttr(resourceName, "mechanisms.email.1.id", "test2@example.com"),
 				),
 			},
 			{
@@ -49,7 +62,9 @@ func TestAccCloudflareNotificationPolicy_Basic(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "alert_type", "universal_ssl_event_type"),
 					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckResourceAttr(resourceName, "email_integration.#", "2"),
+					resource.TestCheckResourceAttr(resourceName, "mechanisms.email.#", "1"),
+					resource.TestCheckResourceAttr(resourceName, "mechanisms.email.0.%", "1"),
+					resource.TestCheckResourceAttr(resourceName, "mechanisms.email.0.id", "test-updated@example.com"),
 				),
 			},
 		},
@@ -86,13 +101,21 @@ func TestAccCloudflareNotificationPolicy_WithFiltersAttribute(t *testing.T) {
 			{
 				Config: testCheckCloudflareNotificationPolicyWithFiltersAttribute(rnd, accountID),
 				Check: resource.ComposeTestCheckFunc(
+					func(state *terraform.State) error {
+						rs, ok := state.RootModule().Resources[resourceName]
+						if !ok {
+							return fmt.Errorf("root module has no resource called %s", resourceName)
+						}
+						fmt.Println(rs)
+						return nil
+					},
 					resource.TestCheckResourceAttr(resourceName, "name", "workers usage notification"),
 					resource.TestCheckResourceAttr(resourceName, "description", "test description"),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "alert_type", "billing_usage_alert"),
 					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckTypeSetElemAttr(resourceName, "filters.0.product.*", "worker_requests"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "filters.0.limit.*", "100"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "filters.product.*", "worker_requests"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "filters.limit.*", "100"),
 				),
 			},
 			{
@@ -103,8 +126,8 @@ func TestAccCloudflareNotificationPolicy_WithFiltersAttribute(t *testing.T) {
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "alert_type", "billing_usage_alert"),
 					resource.TestCheckResourceAttr(resourceName, consts.AccountIDSchemaKey, accountID),
-					resource.TestCheckTypeSetElemAttr(resourceName, "filters.0.product.*", "worker_requests"),
-					resource.TestCheckTypeSetElemAttr(resourceName, "filters.0.limit.*", "100"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "filters.product.*", "worker_requests"),
+					resource.TestCheckTypeSetElemAttr(resourceName, "filters.limit.*", "100"),
 				),
 			},
 		},

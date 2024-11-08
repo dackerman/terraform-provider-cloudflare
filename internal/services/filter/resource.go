@@ -9,10 +9,7 @@ import (
 	"net/http"
 
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/filters"
-	"github.com/cloudflare/cloudflare-go/v3/option"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
@@ -61,26 +58,26 @@ func (r *FilterResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	dataBytes, err := data.MarshalJSON()
+	_, err := data.MarshalJSON()
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
 	env := FilterResultEnvelope{*data}
-	_, err = r.client.Filters.New(
-		ctx,
-		filters.FilterNewParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//_, err = r.client.Filters.New(
+	//	ctx,
+	//	filters.FilterNewParams{
+	//		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	//	},
+	//	option.WithRequestBody("application/json", dataBytes),
+	//	option.WithResponseBodyInto(&res),
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 	bytes, _ := io.ReadAll(res.Body)
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
@@ -109,27 +106,27 @@ func (r *FilterResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	dataBytes, err := data.MarshalJSONForUpdate(*state)
+	_, err := data.MarshalJSONForUpdate(*state)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to serialize http request", err.Error())
 		return
 	}
 	res := new(http.Response)
 	env := FilterResultEnvelope{*data}
-	_, err = r.client.Filters.Update(
-		ctx,
-		data.FilterID.ValueString(),
-		filters.FilterUpdateParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithRequestBody("application/json", dataBytes),
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//_, err = r.client.Filters.Update(
+	//	ctx,
+	//	data.FilterID.ValueString(),
+	//	filters.FilterUpdateParams{
+	//		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	//	},
+	//	option.WithRequestBody("application/json", dataBytes),
+	//	option.WithResponseBodyInto(&res),
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 	bytes, _ := io.ReadAll(res.Body)
 	err = apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
@@ -152,21 +149,21 @@ func (r *FilterResource) Read(ctx context.Context, req resource.ReadRequest, res
 
 	res := new(http.Response)
 	env := FilterResultEnvelope{*data}
-	_, err := r.client.Filters.Get(
-		ctx,
-		data.FilterID.ValueString(),
-		filters.FilterGetParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithResponseBodyInto(&res),
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//_, err := r.client.Filters.Get(
+	//	ctx,
+	//	data.FilterID.ValueString(),
+	//	filters.FilterGetParams{
+	//		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	//	},
+	//	option.WithResponseBodyInto(&res),
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 	bytes, _ := io.ReadAll(res.Body)
-	err = apijson.UnmarshalComputed(bytes, &env)
+	err := apijson.UnmarshalComputed(bytes, &env)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to deserialize http request", err.Error())
 		return
@@ -185,18 +182,18 @@ func (r *FilterResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		return
 	}
 
-	_, err := r.client.Filters.Delete(
-		ctx,
-		data.FilterID.ValueString(),
-		filters.FilterDeleteParams{
-			ZoneID: cloudflare.F(data.ZoneID.ValueString()),
-		},
-		option.WithMiddleware(logging.Middleware(ctx)),
-	)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//_, err := r.client.Filters.Delete(
+	//	ctx,
+	//	data.FilterID.ValueString(),
+	//	filters.FilterDeleteParams{
+	//		ZoneID: cloudflare.F(data.ZoneID.ValueString()),
+	//	},
+	//	option.WithMiddleware(logging.Middleware(ctx)),
+	//)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

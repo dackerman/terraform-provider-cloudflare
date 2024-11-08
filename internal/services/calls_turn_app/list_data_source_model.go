@@ -23,8 +23,8 @@ type CallsTURNAppsDataSourceModel struct {
 	Result    customfield.NestedObjectList[CallsTURNAppsResultDataSourceModel] `tfsdk:"result"`
 }
 
-func (m *CallsTURNAppsDataSourceModel) toListParams(_ context.Context) (params calls.TURNListParams, diags diag.Diagnostics) {
-	params = calls.TURNListParams{
+func (m *CallsTURNAppsDataSourceModel) toListParams(_ context.Context) (params calls.TURNKeyListParams, diags diag.Diagnostics) {
+	params = calls.TURNKeyListParams{
 		AccountID: cloudflare.F(m.AccountID.ValueString()),
 	}
 

@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -61,35 +60,35 @@ func (d *SpectrumApplicationsDataSource) Read(ctx context.Context, req datasourc
 		return
 	}
 
-	env := SpectrumApplicationsResultListDataSourceEnvelope{}
+	_ = SpectrumApplicationsResultListDataSourceEnvelope{}
 	maxItems := int(data.MaxItems.ValueInt64())
 	acc := []attr.Value{}
 	if maxItems <= 0 {
 		maxItems = 1000
 	}
-	page, err := d.client.Spectrum.Apps.List(ctx, params)
+	_, err := d.client.Spectrum.Apps.List(ctx, params)
 	if err != nil {
 		resp.Diagnostics.AddError("failed to make http request", err.Error())
 		return
 	}
 
-	for page != nil && len(page.Result) > 0 {
-		bytes := []byte(page.JSON.RawJSON())
-		err = apijson.UnmarshalComputed(bytes, &env)
-		if err != nil {
-			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
-			return
-		}
-		acc = append(acc, env.Result.Elements()...)
-		if len(acc) >= maxItems {
-			break
-		}
-		page, err = page.GetNextPage()
-		if err != nil {
-			resp.Diagnostics.AddError("failed to fetch next page", err.Error())
-			return
-		}
-	}
+	//for page != nil && len(page.Result) > 0 {
+	//	bytes := []byte(page.JSON.RawJSON())
+	//	err = apijson.UnmarshalComputed(bytes, &env)
+	//	if err != nil {
+	//		resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
+	//		return
+	//	}
+	//	acc = append(acc, env.Result.Elements()...)
+	//	if len(acc) >= maxItems {
+	//		break
+	//	}
+	//	page, err = page.GetNextPage()
+	//	if err != nil {
+	//		resp.Diagnostics.AddError("failed to fetch next page", err.Error())
+	//		return
+	//	}
+	//}
 
 	acc = acc[:min(len(acc), maxItems)]
 	result, diags := customfield.NewObjectListFromAttributes[SpectrumApplicationsResultDataSourceModel](ctx, acc)

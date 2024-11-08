@@ -7,9 +7,6 @@ import (
 	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
-	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
-	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 )
 
@@ -55,46 +52,46 @@ func (d *RateLimitsDataSource) Read(ctx context.Context, req datasource.ReadRequ
 		return
 	}
 
-	params, diags := data.toListParams(ctx)
-	resp.Diagnostics.Append(diags...)
-	if resp.Diagnostics.HasError() {
-		return
-	}
+	//params, diags := data.toListParams(ctx)
+	//resp.Diagnostics.Append(diags...)
+	//if resp.Diagnostics.HasError() {
+	//	return
+	//}
+	//
+	//env := RateLimitsResultListDataSourceEnvelope{}
+	//maxItems := int(data.MaxItems.ValueInt64())
+	//acc := []attr.Value{}
+	//if maxItems <= 0 {
+	//	maxItems = 1000
+	//}
+	//page, err := d.client.RateLimits.List(ctx, params)
+	//if err != nil {
+	//	resp.Diagnostics.AddError("failed to make http request", err.Error())
+	//	return
+	//}
 
-	env := RateLimitsResultListDataSourceEnvelope{}
-	maxItems := int(data.MaxItems.ValueInt64())
-	acc := []attr.Value{}
-	if maxItems <= 0 {
-		maxItems = 1000
-	}
-	page, err := d.client.RateLimits.List(ctx, params)
-	if err != nil {
-		resp.Diagnostics.AddError("failed to make http request", err.Error())
-		return
-	}
+	//for page != nil && len(page.Result) > 0 {
+	//	bytes := []byte(page.JSON.RawJSON())
+	//	err = apijson.UnmarshalComputed(bytes, &env)
+	//	if err != nil {
+	//		resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
+	//		return
+	//	}
+	//	acc = append(acc, env.Result.Elements()...)
+	//	if len(acc) >= maxItems {
+	//		break
+	//	}
+	//	page, err = page.GetNextPage()
+	//	if err != nil {
+	//		resp.Diagnostics.AddError("failed to fetch next page", err.Error())
+	//		return
+	//	}
+	//}
 
-	for page != nil && len(page.Result) > 0 {
-		bytes := []byte(page.JSON.RawJSON())
-		err = apijson.UnmarshalComputed(bytes, &env)
-		if err != nil {
-			resp.Diagnostics.AddError("failed to unmarshal http request", err.Error())
-			return
-		}
-		acc = append(acc, env.Result.Elements()...)
-		if len(acc) >= maxItems {
-			break
-		}
-		page, err = page.GetNextPage()
-		if err != nil {
-			resp.Diagnostics.AddError("failed to fetch next page", err.Error())
-			return
-		}
-	}
-
-	acc = acc[:min(len(acc), maxItems)]
-	result, diags := customfield.NewObjectListFromAttributes[RateLimitsResultDataSourceModel](ctx, acc)
-	resp.Diagnostics.Append(diags...)
-	data.Result = result
+	//acc = acc[:min(len(acc), maxItems)]
+	//result, diags := customfield.NewObjectListFromAttributes[RateLimitsResultDataSourceModel](ctx, acc)
+	//resp.Diagnostics.Append(diags...)
+	//data.Result = result
 
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }

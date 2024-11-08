@@ -34,10 +34,10 @@ type ZoneLockdownDataSourceModel struct {
 	Filter         *ZoneLockdownFindOneByDataSourceModel                               `tfsdk:"filter"`
 }
 
-func (m *ZoneLockdownDataSourceModel) toReadParams(_ context.Context) (params firewall.LockdownGetParams, diags diag.Diagnostics) {
-	params = firewall.LockdownGetParams{
-		ZoneID: cloudflare.F(m.ZoneID.ValueString()),
-	}
+func (m *ZoneLockdownDataSourceModel) toReadParams(_ context.Context) (params firewall.LockdownListParams, diags diag.Diagnostics) {
+	//params = firewall.LockdownGetParams{
+	//	ZoneID: cloudflare.F(m.ZoneID.ValueString()),
+	//}
 
 	return
 }
@@ -48,9 +48,9 @@ func (m *ZoneLockdownDataSourceModel) toListParams(_ context.Context) (params fi
 	mFilterModifiedOn, errs := m.Filter.ModifiedOn.ValueRFC3339Time()
 	diags.Append(errs...)
 
-	params = firewall.LockdownListParams{
-		ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
-	}
+	//params = firewall.LockdownListParams{
+	//	ZoneID: cloudflare.F(m.Filter.ZoneID.ValueString()),
+	//}
 
 	if !m.Filter.CreatedOn.IsNull() {
 		params.CreatedOn = cloudflare.F(mFilterCreatedOn)
