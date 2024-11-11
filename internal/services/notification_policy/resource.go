@@ -56,6 +56,7 @@ func (r *NotificationPolicyResource) Configure(ctx context.Context, req resource
 
 func (r *NotificationPolicyResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data *NotificationPolicyModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	//filters := customfield.NestedObject[NotificationPolicyFiltersModel]{}
 	//req.Plan.GetAttribute(ctx, path.Root("filters"), &filters)
