@@ -12,6 +12,7 @@ import (
 	"github.com/cloudflare/cloudflare-go/v4/option"
 	"github.com/cloudflare/cloudflare-go/v4/rulesets"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/apijson"
+	"github.com/cloudflare/terraform-provider-cloudflare/internal/customfield"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/importpath"
 	"github.com/cloudflare/terraform-provider-cloudflare/internal/logging"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -318,26 +319,33 @@ func (r *RulesetResource) ModifyPlan(ctx context.Context, req resource.ModifyPla
 		}
 	}
 
-	planElements := make([]RulesetRulesModel, 0, len(state.Rules.Elements()))
-	diags = state.Rules.ElementsAs(ctx, &planElements, false)
+	planElements := make([]RulesetRulesModel, 0, len(plan.Rules.Elements()))
+	diags = plan.Rules.ElementsAs(ctx, &planElements, false)
 	if diags != nil {
 		resp.Diagnostics.Append(diags...)
 		return
 	}
 
-	for _, rule := range planElements {
+	for i := range planElements {
 		// Do nothing if the rule's ID is a known planned value.
-		if !rule.ID.IsUnknown() {
+		if !planElements[i].ID.IsUnknown() {
 			continue
 		}
 
 		// If the rule's ref matches a rule in the state, populate the planned
 		// value of its ID with the corresponding ID from the state.
-		if ref := rule.Ref.ValueString(); ref != "" {
+		if ref := planElements[i].Ref.ValueString(); ref != "" {
 			if id, ok := ruleIDsByRef[ref]; ok {
-				rule.ID = id
+				planElements[i].ID = id
 			}
 		}
+	}
+
+	// Update the plan with the modified rules
+	plan.Rules, diags = customfield.NewObjectList(ctx, planElements)
+	if diags != nil {
+		resp.Diagnostics.Append(diags...)
+		return
 	}
 
 	resp.Diagnostics.Append(resp.Plan.Set(ctx, plan)...)
