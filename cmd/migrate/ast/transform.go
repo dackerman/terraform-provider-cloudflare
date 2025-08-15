@@ -2,6 +2,8 @@ package ast
 
 import (
 	"fmt"
+	"maps"
+	"slices"
 	"strings"
 
 	"github.com/hashicorp/hcl/v2"
@@ -67,6 +69,42 @@ func traversal2S(tr hcl.Traversal) string {
 	raw := (hclwrite.NewExpressionAbsTraversal(tr).BuildTokens(nil).Bytes())
 	str, _ := strings.CutPrefix(string(raw), ".")
 	return str
+}
+
+func Body2S(body hclsyntax.Body, diag Diagnostics) string {
+	lines := []string{}
+	for _, block := range body.Blocks {
+		line := Block2S(*block, diag)
+		lines = append(lines, line)
+	}
+	for _, key := range slices.Sorted(maps.Keys(body.Attributes)) {
+		attr := body.Attributes[key]
+		line := Attr2S(*attr, diag)
+		lines = append(lines, line)
+	}
+	return strings.Join(lines, "\n")
+}
+
+func Block2S(block hclsyntax.Block, diag Diagnostics) string {
+	l1 := fmt.Sprintf(`%s`, block.Type)
+	for _, label := range block.Labels {
+		l1 += fmt.Sprintf(` %q`, label)
+	}
+	lines := []string{l1 + " {"}
+	for _, line := range strings.Split(Body2S(*block.Body, diag), "\n") {
+		lines = append(lines, "  "+line)
+	}
+	lines = append(lines, "}")
+	return strings.Join(lines, "\n")
+}
+
+func Blocks2S(blocks hclsyntax.Blocks, diag Diagnostics) string {
+	acc := []string{}
+	for _, b := range blocks {
+		acc = append(acc, Block2S(*b, diag))
+	}
+	lines := strings.Join(acc, "\n")
+	return string(hclwrite.Format([]byte(lines)))
 }
 
 func Attr2S(attr hclsyntax.Attribute, diag Diagnostics) (token string) {
@@ -147,9 +185,9 @@ func Expr2S(expr hcl.Expression, diag Diagnostics) (token string) {
 		for _, item := range e.Items {
 			key := Expr2S(item.KeyExpr, diag)
 			val := Expr2S(item.ValueExpr, diag)
-			lines = append(lines, "  "+key+" = "+val)
+			lines = append(lines, key+" = "+val)
 		}
-		token = "{" + strings.Join(lines, "\n") + "}"
+		token = "{" + strings.Join(lines, ", ") + "}"
 
 	// TODO might need to wrap inner key in extra syntax,
 	// e.g. ["my syntactically weird key!?"]
