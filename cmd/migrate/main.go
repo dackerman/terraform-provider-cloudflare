@@ -272,6 +272,11 @@ func transformFile(content []byte, filename string) ([]byte, error) {
 		if isManagedTransformsResource(block) {
 			transformManagedTransformsBlock(block)
 		}
+
+		if isDNSRecordResource(block) {
+			// Process DNS record to fix CAA flags
+			ProcessDNSRecordConfig(file)
+		}
 	}
 
 	// Remove old blocks

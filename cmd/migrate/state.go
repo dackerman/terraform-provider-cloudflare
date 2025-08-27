@@ -53,6 +53,13 @@ func transformStateJSON(data []byte) ([]byte, error) {
 			return true // Continue to next resource
 		}
 
+		// Handle resource type renames
+		if resourceType == "cloudflare_record" {
+			// Rename cloudflare_record to cloudflare_dns_record
+			result, _ = sjson.Set(result, resourcePath+".type", "cloudflare_dns_record")
+			resourceType = "cloudflare_dns_record"
+		}
+
 		// Process each instance
 		instances := resource.Get("instances")
 		instances.ForEach(func(iidx, instance gjson.Result) bool {
@@ -75,6 +82,9 @@ func transformStateJSON(data []byte) ([]byte, error) {
 
 			case "cloudflare_managed_transforms":
 				result = transformManagedTransformsStateJSON(result, path)
+
+			case "cloudflare_dns_record":
+				result = transformDNSRecordStateJSON(result, path, instance)
 			}
 
 			return true
