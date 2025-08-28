@@ -181,10 +181,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 				CustomType:         customfield.NewListType[types.String](ctx),
 				ElementType:        types.StringType,
 			},
-			"tags": schema.SetAttribute{
+			"tags": schema.ListAttribute{
 				Description: "The tags you want assigned to an application. Tags are used to filter applications in the App Launcher dashboard.",
 				Computed:    true,
-				CustomType:  customfield.NewSetType[types.String](ctx),
+				CustomType:  customfield.NewListType[types.String](ctx),
 				ElementType: types.StringType,
 			},
 			"cors_headers": schema.SingleNestedAttribute{
@@ -345,10 +345,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "The UUID of the policy",
 							Computed:    true,
 						},
-						"approval_groups": schema.SetNestedAttribute{
+						"approval_groups": schema.ListNestedAttribute{
 							Description: "Administrators who can approve a temporary authentication request.",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesApprovalGroupsDataSourceModel](ctx),
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesApprovalGroupsDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"approvals_needed": schema.Float64Attribute{
@@ -391,10 +391,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								),
 							},
 						},
-						"exclude": schema.SetNestedAttribute{
+						"exclude": schema.ListNestedAttribute{
 							Description: "Rules evaluated with a NOT logical operator. To match the policy, a user cannot meet any of the Exclude rules.",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesExcludeDataSourceModel](ctx),
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesExcludeDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
@@ -675,10 +675,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 								},
 							},
 						},
-						"include": schema.SetNestedAttribute{
+						"include": schema.ListNestedAttribute{
 							Description: "Rules evaluated with an OR logical operator. A user needs to meet only one of the Include rules.",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesIncludeDataSourceModel](ctx),
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesIncludeDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
@@ -979,10 +979,10 @@ func DataSourceSchema(ctx context.Context) schema.Schema {
 							Description: "Require users to enter a justification when they log in to the application.",
 							Computed:    true,
 						},
-						"require": schema.SetNestedAttribute{
+						"require": schema.ListNestedAttribute{
 							Description: "Rules evaluated with an AND logical operator. To match the policy, a user must meet all of the Require rules.",
 							Computed:    true,
-							CustomType:  customfield.NewNestedObjectSetType[ZeroTrustAccessApplicationPoliciesRequireDataSourceModel](ctx),
+							CustomType:  customfield.NewNestedObjectListType[ZeroTrustAccessApplicationPoliciesRequireDataSourceModel](ctx),
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: map[string]schema.Attribute{
 									"group": schema.SingleNestedAttribute{
