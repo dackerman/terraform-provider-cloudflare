@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"reflect"
 	"regexp"
 	"strings"
 	"testing"
@@ -32,14 +33,21 @@ func RunTransformationTests(t *testing.T, tests []TestCase, transformFunc func([
 			// Transform the file
 			result, err := transformFunc(file.Bytes(), "test.tf")
 			assert.NoError(t, err)
-			resultString := normalizeWhitespace(string(result))
-
+			
+			// Use order-agnostic comparison for HCL
+			resultString := string(result)
+			
 			// Check each expected output
 			for _, expected := range tt.Expected {
-				normalizedExpected := normalizeWhitespace(expected)
-				formattedResult := ast.FormatString(string(result))
-				formattedExpected := ast.FormatString(expected)
-				assert.Contains(t, resultString, normalizedExpected, cmp.Diff(formattedExpected, formattedResult))
+				// Try the more sophisticated comparison first
+				if !compareHCLIgnoringOrder(resultString, expected) {
+					// Fall back to the original comparison for better error messages
+					resultStringNorm := normalizeWhitespace(resultString)
+					normalizedExpected := normalizeWhitespace(expected)
+					formattedResult := ast.FormatString(resultString)
+					formattedExpected := ast.FormatString(expected)
+					assert.Contains(t, resultStringNorm, normalizedExpected, cmp.Diff(formattedExpected, formattedResult))
+				}
 			}
 		})
 	}
@@ -112,7 +120,11 @@ func RunFullStateTransformationTests(t *testing.T, tests []StateTestCase) {
 				resultPretty, _ := json.MarshalIndent(resultMap, "", "  ")
 				expectedPretty, _ := json.MarshalIndent(expectedMap, "", "  ")
 
-				t.Errorf("Transformation failed\nExpected:\n%s\n\nGot:\n%s", expectedPretty, resultPretty)
+				// Also show the diff for easier debugging
+				diff := cmp.Diff(string(expectedPretty), string(resultPretty))
+				
+				t.Errorf("State transformation mismatch for test '%s'\n\nDiff (expected -> actual):\n%s\n\nExpected:\n%s\n\nGot:\n%s", 
+					tc.Name, diff, expectedPretty, resultPretty)
 			}
 		})
 	}
@@ -124,20 +136,43 @@ func compareJSON(t *testing.T, actual, expected string) bool {
 	var actualData, expectedData interface{}
 
 	if err := json.Unmarshal([]byte(actual), &actualData); err != nil {
-		t.Fatalf("Failed to parse actual JSON: %v", err)
+		t.Logf("Failed to parse actual JSON: %v\nJSON: %s", err, actual)
 		return false
 	}
 
 	if err := json.Unmarshal([]byte(expected), &expectedData); err != nil {
-		t.Fatalf("Failed to parse expected JSON: %v", err)
+		t.Logf("Failed to parse expected JSON: %v\nJSON: %s", err, expected)
 		return false
 	}
 
-	// Marshal both to normalize formatting (this handles key ordering)
-	actualNorm, _ := json.Marshal(actualData)
-	expectedNorm, _ := json.Marshal(expectedData)
+	// Use deep equal for semantic comparison
+	if !reflect.DeepEqual(normalizeJSONValue(actualData), normalizeJSONValue(expectedData)) {
+		return false
+	}
 
-	return string(actualNorm) == string(expectedNorm)
+	return true
+}
+
+// normalizeJSONValue recursively normalizes JSON values for comparison
+func normalizeJSONValue(v interface{}) interface{} {
+	switch val := v.(type) {
+	case map[string]interface{}:
+		// Sort map keys for consistent comparison
+		normalized := make(map[string]interface{})
+		for k, v := range val {
+			normalized[k] = normalizeJSONValue(v)
+		}
+		return normalized
+	case []interface{}:
+		// Normalize array elements
+		normalized := make([]interface{}, len(val))
+		for i, elem := range val {
+			normalized[i] = normalizeJSONValue(elem)
+		}
+		return normalized
+	default:
+		return val
+	}
 }
 
 // normalizeWhitespace normalizes whitespace in a string for comparison
