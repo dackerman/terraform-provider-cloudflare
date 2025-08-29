@@ -28,7 +28,10 @@ resource "cloudflare_tiered_cache" "example" {
   cache_type = "generic"
 }`,
 			Expected: []string{
-				`resource "cloudflare_argo_tiered_caching" "example"`,
+				`resource "cloudflare_argo_tiered_caching" "example" {
+  zone_id = "test-zone-id"
+  value   = "on"
+}`,
 				`moved {
   from = cloudflare_tiered_cache.example
   to   = cloudflare_argo_tiered_caching.example
@@ -93,12 +96,19 @@ resource "cloudflare_record" "example" {
   type    = "A"
 }`,
 			Expected: []string{
-				`resource "cloudflare_zone" "example"`,
+				`resource "cloudflare_zone" "example" {
+  name = "example.com"
+}`,
 				`resource "cloudflare_tiered_cache" "example" {
   zone_id = cloudflare_zone.example.id
   value   = "on"
 }`,
-				`resource "cloudflare_record" "example"`,
+				`resource "cloudflare_record" "example" {
+  zone_id = cloudflare_zone.example.id
+  name    = "test"
+  value   = "192.0.2.1"
+  type    = "A"
+}`,
 			},
 		},
 		{
@@ -109,11 +119,13 @@ resource "cloudflare_tiered_cache" "example" {
   cache_type = "generic"
 }`,
 			Expected: []string{
-				`resource "cloudflare_argo_tiered_caching" "example" {
+				`
+resource "cloudflare_argo_tiered_caching" "example" {
   zone_id = "test-zone-id"
   value   = "on"
 }`,
-				`moved {
+				`
+moved {
   from = cloudflare_tiered_cache.example
   to   = cloudflare_argo_tiered_caching.example
 }`,
@@ -137,8 +149,10 @@ resource "cloudflare_tiered_cache" "generic_two" {
   cache_type = "generic"
 }`,
 			Expected: []string{
-				`resource "cloudflare_argo_tiered_caching" "generic_one"`,
-				`zone_id = "zone1"`,
+				`resource "cloudflare_argo_tiered_caching" "generic_one" {
+  zone_id = "zone1"
+  value   = "on"
+}`,
 				`moved {
   from = cloudflare_tiered_cache.generic_one
   to   = cloudflare_argo_tiered_caching.generic_one
@@ -147,8 +161,10 @@ resource "cloudflare_tiered_cache" "generic_two" {
   zone_id = "zone2"
   value   = "on"
 }`,
-				`resource "cloudflare_argo_tiered_caching" "generic_two"`,
-				`zone_id = "zone3"`,
+				`resource "cloudflare_argo_tiered_caching" "generic_two" {
+  zone_id = "zone3"
+  value   = "on"
+}`,
 				`moved {
   from = cloudflare_tiered_cache.generic_two
   to   = cloudflare_argo_tiered_caching.generic_two
@@ -181,9 +197,14 @@ resource "cloudflare_tiered_cache" "example" {
   }
 }`,
 			Expected: []string{
-				`resource "cloudflare_argo_tiered_caching" "example"`,
-				`zone_id = cloudflare_zone.example.id`,
-				`create_before_destroy = true`,
+				`resource "cloudflare_argo_tiered_caching" "example" {
+  zone_id = cloudflare_zone.example.id
+  value   = "on"
+  
+  lifecycle {
+    create_before_destroy = true
+  }
+}`,
 				`moved {
   from = cloudflare_tiered_cache.example
   to   = cloudflare_argo_tiered_caching.example
