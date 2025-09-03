@@ -2032,6 +2032,79 @@ func TestAccCloudflareAccessApplication_TagsOrderIgnored(t *testing.T) {
 	})
 }
 
+func TestAccCloudflareAccessApplication_Bookmark(t *testing.T) {
+	rnd := utils.GenerateRandomResourceName()
+	name := fmt.Sprintf("cloudflare_zero_trust_access_application.%s", rnd)
+	resourceName := name
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() {
+			acctest.TestAccPreCheck(t)
+			acctest.TestAccPreCheck_AccountID(t)
+		},
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		CheckDestroy:             testAccCheckCloudflareAccessApplicationDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCloudflareAccessApplicationConfigBookmark(rnd, domain, cloudflare.AccountIdentifier(accountID)),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New(consts.AccountIDSchemaKey), knownvalue.StringExact(accountID)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("name"), knownvalue.StringExact(rnd)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("domain"), knownvalue.StringExact("https://example.com")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("type"), knownvalue.StringExact("bookmark")),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("app_launcher_visible"), knownvalue.Bool(true)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("logo_url"), knownvalue.StringExact("https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg")),
+					
+					// Bookmark applications should not have these attributes
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("session_duration"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("cors_headers"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("saas_app"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("destinations"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("self_hosted_domains"), knownvalue.Null()),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("policies"), knownvalue.Null()),
+				},
+			},
+			{
+				ResourceName:            resourceName,
+				ImportState:             true,
+				ImportStateVerify:       true,
+				ImportStateIdPrefix:     fmt.Sprintf("accounts/%s/", accountID),
+			},
+			{
+				// Test update of optional attributes
+				Config: testAccCloudflareAccessApplicationConfigBookmarkUpdated(rnd, domain, accountID),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("app_launcher_visible"), knownvalue.Bool(false)),
+					statecheck.ExpectKnownValue(resourceName, tfjsonpath.New("logo_url"), knownvalue.StringExact("https://example.com/new-logo.png")),
+				},
+			},
+			{
+				// Ensures no diff on second plan
+				Config:   testAccCloudflareAccessApplicationConfigBookmarkUpdated(rnd, domain, accountID),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
 func testAccCloudflareAccessApplicationConfigWithTagsOrdering(rnd, domain, accountID string) string {
 	return acctest.LoadTestCase("accessapplicationconfigwithtagsordering.tf", rnd, domain, accountID)
+}
+
+func testAccCloudflareAccessApplicationConfigBookmark(rnd, domain string, identifier *cloudflare.ResourceContainer) string {
+	return acctest.LoadTestCase("accessapplicationconfigbookmark.tf", rnd, domain, identifier.Type, identifier.Identifier)
+}
+
+func testAccCloudflareAccessApplicationConfigBookmarkUpdated(rnd, domain, accountID string) string {
+	return fmt.Sprintf(`
+		resource "cloudflare_zero_trust_access_application" "%[1]s" {
+		  account_id = "%[3]s"
+		  name       = "%[1]s"
+		  domain     = "https://example.com"
+		  type       = "bookmark"
+
+		  app_launcher_visible = false
+		  logo_url            = "https://example.com/new-logo.png"
+
+		}`, rnd, domain, accountID)
 }
