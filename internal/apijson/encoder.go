@@ -27,6 +27,12 @@ import (
 var explicitJsonNull = []byte("null")
 var encoders sync.Map // map[encoderEntry]encoderFunc
 
+// CustomMarshaler allows types to override their JSON encoding behavior while supporting
+// plan/state diffing for Terraform operations. This is checked before standard encoding.
+type CustomMarshaler interface {
+	MarshalJSONWithState(plan interface{}, state interface{}) ([]byte, error)
+}
+
 // Marshals the given data to a JSON string.
 // For null values, omits the property entirely.
 func Marshal(value interface{}) ([]byte, error) {
@@ -138,6 +144,51 @@ func (e *encoder) typeEncoder(t reflect.Type) encoderFunc {
 }
 
 func (e *encoder) newTypeEncoder(t reflect.Type) encoderFunc {
+	// Check if type implements CustomMarshaler interface
+	customMarshalerType := reflect.TypeOf((*CustomMarshaler)(nil)).Elem()
+	if t.Implements(customMarshalerType) {
+		return func(plan reflect.Value, state reflect.Value) ([]byte, error) {
+			if !plan.IsValid() || (plan.Kind() == reflect.Ptr && plan.IsNil()) {
+				return nil, nil
+			}
+			marshaler := plan.Interface().(CustomMarshaler)
+			var stateVal interface{}
+			if state.IsValid() {
+				stateVal = state.Interface()
+			}
+			return marshaler.MarshalJSONWithState(plan.Interface(), stateVal)
+		}
+	}
+	// Also check if pointer to type implements CustomMarshaler
+	if reflect.PointerTo(t).Implements(customMarshalerType) && t.Kind() != reflect.Ptr {
+		return func(plan reflect.Value, state reflect.Value) ([]byte, error) {
+			if !plan.IsValid() {
+				return nil, nil
+			}
+			if plan.CanAddr() {
+				marshaler := plan.Addr().Interface().(CustomMarshaler)
+				var stateVal interface{}
+				if state.IsValid() && state.CanAddr() {
+					stateVal = state.Addr().Interface()
+				} else if state.IsValid() {
+					stateVal = state.Interface()
+				}
+				return marshaler.MarshalJSONWithState(plan.Addr().Interface(), stateVal)
+			}
+			// If we can't get address, create a pointer to a copy
+			ptr := reflect.New(t)
+			ptr.Elem().Set(plan)
+			marshaler := ptr.Interface().(CustomMarshaler)
+			var stateVal interface{}
+			if state.IsValid() {
+				statePtr := reflect.New(t)
+				statePtr.Elem().Set(state)
+				stateVal = statePtr.Interface()
+			}
+			return marshaler.MarshalJSONWithState(ptr.Interface(), stateVal)
+		}
+	}
+
 	if t.ConvertibleTo(reflect.TypeOf(time.Time{})) {
 		return e.newTimeTypeEncoder()
 	}

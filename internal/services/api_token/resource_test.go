@@ -518,6 +518,31 @@ func TestAccAPIToken_MultiplePolicies(t *testing.T) {
 	})
 }
 
+func TestAccAPIToken_NestedWithJsonencode(t *testing.T) {
+	// This test verifies that jsonencode can be used to pass nested resource structures
+	rnd := utils.GenerateRandomResourceName()
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
+	resourceName := "cloudflare_api_token.test_nested_jsonencode"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { acctest.TestAccPreCheck(t) },
+		ProtoV6ProviderFactories: acctest.TestAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				Config: acctest.LoadTestCase("api_token-nested-with-jsonencode.tf", rnd, accountID),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "name", rnd),
+					resource.TestCheckResourceAttr(resourceName, "policies.#", "1"),
+					// Check if the jsonencoded value is stored
+					resource.TestCheckResourceAttr(resourceName, 
+						fmt.Sprintf("policies.0.resources.com.cloudflare.api.account.%s", accountID),
+						`{"com.cloudflare.api.account.zone.*":"*"}`),
+				),
+			},
+		},
+	})
+}
+
 func testAccCheckCloudflareAPITokenDestroy(s *terraform.State) error {
 	client := acctest.SharedClient()
 
